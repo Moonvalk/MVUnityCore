@@ -1,0 +1,63 @@
+
+namespace Moonvalk.Accessory
+{
+    /// <summary>
+    /// A container for a value that will force initializing itself before being used.
+    /// </summary>
+    /// <typeparam name="T">The type of value that will be stored.</typeparam>
+    public class InitValue<T>
+    {
+        #region Data Fields
+        /// <summary>
+        /// A contract for a function expected to initialize a value within this container.
+        /// </summary>
+        public delegate T InitFunction();
+
+        /// <summary>
+        /// A flag that determines whether this container has initialized itself before use.
+        /// </summary>
+        protected bool _isInitialized = false;
+
+        /// <summary>
+        /// Reference to a method used to initialize the value stored within this container.
+        /// </summary>
+        protected InitFunction _initializationMethod;
+
+        /// <summary>
+        /// The value stored by this container.
+        /// </summary>
+        protected T _value;
+        #endregion
+
+        /// <summary>
+        /// Default constructor that takes an initialization method to be run before a value can be returned via this container.
+        /// </summary>
+        /// <param name="initializationMethod_">Function to be run to initialize a new value.</param>
+        public InitValue(InitFunction initializationMethod_)
+        {
+            this._initializationMethod = initializationMethod_;
+        }
+
+        /// <summary>
+        /// Gets/sets the value stored within this container.
+        /// </summary>
+        /// <value>Value of type T stored by this container.</value>
+        public T Value
+        {
+            get
+            {
+                if (!this._isInitialized)
+                {
+                    this._value = this._initializationMethod();
+                    this._isInitialized = true;
+                }
+                return _value;
+            }
+            set
+            {
+                this._isInitialized = true;
+                this._value = value;
+            }
+        }
+    }
+}
